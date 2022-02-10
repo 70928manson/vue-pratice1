@@ -1,5 +1,7 @@
 # vue-pratice1
 
+github-page:https://70928manson.github.io/vue-pratice1/
+
 步驟:
 
 登入
