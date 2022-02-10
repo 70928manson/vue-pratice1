@@ -1,6 +1,7 @@
 import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.esm-browser.min.js";
 
 let productModal = {};
+let delProductModal = {};
 
 const app = createApp({
     data() {
@@ -12,6 +13,7 @@ const app = createApp({
                 //新增多圖片
                 imagesUrl: [],
             },
+            isNew: false,
         }
     },
     methods: {
@@ -39,22 +41,70 @@ const app = createApp({
                     console.log(err);
                 })
         },
-        openModal() {
-            productModal.show();
+        openModal(status, product) {
+            console.log(status, product);
+            if(status === 'isNew'){
+                this.tempProduct = {
+                    //新增多圖片
+                    imagesUrl: [],
+                }
+                productModal.show();
+                this.isNew = true;
+            }else if(status === 'edit'){
+                this.tempProduct = { ...product } //注意淺拷貝問題
+                productModal.show();
+                this.isNew = false;
+            }else if(status === 'delete'){
+                delProductModal.show();
+                this.tempProduct = { ...product } //注意淺拷貝問題
+            }
+        },
+        updateProduct() {
+            let url = `${this.url}/api/${this.api_Path}/admin/product`;
+            let method = 'post';
+
+            //若為編輯情況，url和method被替換
+            if(!this.isNew){
+               url = `${this.url}/api/${this.api_Path}/admin/product/${this.tempProduct.id}`;
+               method = 'put';
+            }
+
+            axios[method](url, { data: this.tempProduct })
+                .then((res) => {
+                    console.log(res);
+
+                    this.getProductsData();
+                    productModal.hide();
+                })
+                .catch((err) => {
+                    alert(err.data.message);
+                    console.log(err);
+                })
+        },
+        deletProduct() {
+            let url = `${this.url}/api/${this.api_Path}/admin/product/${this.tempProduct.id}`;
+
+            axios.delete(url)
+                .then((res) => {
+                    console.log(res);
+                    this.getProductsData();
+                    delProductModal.hide();
+                })
+                .catch((err) => {
+                    alert(err.data.message);
+                    console.log(err);
+                })
         }
     },
     mounted() {
         //取得dom元素=>mounted
         // 取得 Token
         const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        console.log('get Cookie token', token);
         axios.defaults.headers.common['Authorization'] = token;
 
         this.checkLogin();
-
-        productModal = new bootstrap.Modal(document.getElementById('productModal'), {
-            keyboard: false
-        })
+        productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'));
     }
 });
 

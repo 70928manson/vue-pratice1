@@ -15,7 +15,7 @@
     <div id="app">
       <div class="container">
         <div class="text-end mt-4">
-          <button class="btn btn-primary" type="button" @click="openModal">
+          <button class="btn btn-primary" type="button" @click="openModal('isNew')">
             建立新的產品
           </button>
         </div>
@@ -52,10 +52,10 @@
               </td>
               <td>
                 <div class="btn-group">
-                  <button type="button" class="btn btn-outline-primary btn-sm" @click="">
+                  <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal('edit', item)">
                     編輯
                   </button>
-                  <button type="button" class="btn btn-outline-danger btn-sm" @click="">
+                  <button type="button" class="btn btn-outline-danger btn-sm" @click="openModal('delete', item)">
                     刪除
                   </button>
                 </div>
@@ -159,7 +159,7 @@
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-primary">
+              <button type="button" class="btn btn-primary" @click="updateProduct">
                 確認
               </button>
             </div>
@@ -178,13 +178,13 @@
             </div>
             <div class="modal-body">
               是否刪除
-              <strong class="text-danger"></strong> 商品(刪除後將無法恢復)。
+              <strong class="text-danger">{{ tempProduct.title }}</strong> 商品(刪除後將無法恢復)。
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-danger">
+              <button type="button" class="btn btn-danger" @click="deletProduct">
                 確認刪除
               </button>
             </div>
